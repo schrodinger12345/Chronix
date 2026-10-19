@@ -1,0 +1,72 @@
+{
+  "name": "chronix",
+  "displayName": "Chronix",
+  "description": "Curated troubleshooting memory for coding-agent conversations.",
+  "version": "0.1.0",
+  "publisher": "chronix-local",
+  "engines": {
+    "vscode": "^1.103.0"
+  },
+  "categories": ["Other"],
+  "activationEvents": [
+    "onCommand:chronix.saveConversation",
+    "onCommand:chronix.searchMemory",
+    "onView:chronix.knowledgeTree"
+  ],
+  "main": "./out/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "chronix.saveConversation", "title": "Chronix: Save Solved Conversation" },
+      { "command": "chronix.searchMemory", "title": "Chronix: Search Similar Problems" },
+      { "command": "chronix.openKnowledgeTree", "title": "Chronix: Open Knowledge Tree" },
+      { "command": "chronix.openNode", "title": "Chronix: Open Knowledge Item" },
+      { "command": "chronix.copyForAgent", "title": "Chronix: Copy Case for Agent" },
+      { "command": "chronix.createVariant", "title": "Chronix: Create Solution Variant" },
+      { "command": "chronix.changeStatus", "title": "Chronix: Change Solution Status" }
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        { "id": "chronix", "title": "Chronix", "icon": "media/chronix.svg" }
+      ]
+    },
+    "views": {
+      "chronix": [
+        { "id": "chronix.knowledgeTree", "name": "Knowledge Tree" }
+      ]
+    },
+    "menus": {
+      "view/item/context": [
+        { "command": "chronix.copyForAgent", "when": "view == chronix.knowledgeTree && (viewItem == chronix.problem || viewItem == chronix.solution)", "group": "inline" },
+        { "command": "chronix.createVariant", "when": "view == chronix.knowledgeTree && viewItem == chronix.solution", "group": "navigation" },
+        { "command": "chronix.changeStatus", "when": "view == chronix.knowledgeTree && viewItem == chronix.solution", "group": "navigation" }
+      ]
+    },
+    "configuration": {
+      "title": "Chronix",
+      "properties": {
+        "chronix.defaultCategories": {
+          "type": "array",
+          "default": ["Docker", "API", "Frontend", "Backend", "Database", "Testing", "Security", "Optimization", "Tooling"],
+          "description": "Suggested top-level categories for new cases."
+        },
+        "chronix.captureLimit": {
+          "type": "number",
+          "default": 12000,
+          "minimum": 1000,
+          "description": "Maximum characters retained from copied conversation context."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "package": "npx @vscode/vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "@types/vscode": "^1.103.0",
+    "typescript": "^5.8.3",
+    "@vscode/vsce": "^3.6.0"
+  }
+}
