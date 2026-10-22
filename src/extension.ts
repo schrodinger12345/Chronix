@@ -6,7 +6,7 @@ import { CaseDraft, KnowledgeNode, SolutionStatus } from "./types";
 const OUTCOMES: SolutionStatus[] = ["verified", "fallback", "partial", "rejected", "superseded"];
 
 export async function activate(context: vscode.ExtensionContext): Promise<void> {
-  const store = new KnowledgeStore(context.globalStorageUri);
+  const store = new KnowledgeStore(resolveStoragePath(context));
   await store.initialize();
   const tree = new KnowledgeTreeProvider(store);
   context.subscriptions.push(store, vscode.window.registerTreeDataProvider("chronix.knowledgeTree", tree));
@@ -67,6 +67,10 @@ export async function activate(context: vscode.ExtensionContext): Promise<void> 
 
 export function deactivate(): void {}
 
+function resolveStoragePath(context: vscode.ExtensionContext): string {
+  return vscode.workspace.getConfiguration("chronix").get<string>("storagePath", "").trim() || context.globalStorageUri.fsPath;
+}
+
 async function readExplicitCapture(): Promise<string | undefined> {
   const editor = vscode.window.activeTextEditor;
   const selected = editor && !editor.selection.isEmpty ? editor.document.getText(editor.selection).trim() : "";
@@ -85,7 +89,7 @@ async function collectCaseDraft(evidence: string, store: KnowledgeStore): Promis
   if (!title?.trim()) { return undefined; }
   const existing = (await store.categories()).map(item => item.title);
   const configured = vscode.workspace.getConfiguration("chronix").get<string[]>("defaultCategories", []);
-  const categoryPick = await vscode.window.showQuickPick([...new Set([...existing, ...configured]), "$(add) Create a category…"], { prompt: "Primary category", ignoreFocusOut: true });
+  const categoryPick = await vscode.window.showQuickPick([...new Set([...existing, ...configured]), "$(add) Create a category…"], { placeHolder: "Primary category", ignoreFocusOut: true });
   if (!categoryPick) { return undefined; }
   const category = categoryPick.includes("Create a category") ? await vscode.window.showInputBox({ prompt: "New category name" }) : categoryPick.replace("$(add) ", "");
   if (!category?.trim()) { return undefined; }

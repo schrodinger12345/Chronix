@@ -1,6 +1,5 @@
 import * as fs from "node:fs/promises";
 import * as path from "node:path";
-import * as vscode from "vscode";
 import { CaseDraft, EdgeType, KnowledgeEdge, KnowledgeNode, SearchResult, SolutionStatus } from "./types";
 
 type SqliteDatabase = {
@@ -11,14 +10,14 @@ type SqliteDatabase = {
 
 type PersistedData = { nodes: KnowledgeNode[]; edges: KnowledgeEdge[] };
 
-export class KnowledgeStore implements vscode.Disposable {
+export class KnowledgeStore {
   private db?: SqliteDatabase;
   private fallback: PersistedData = { nodes: [], edges: [] };
   private readonly dataDirectory: string;
   private readonly fallbackPath: string;
 
-  constructor(private readonly storageUri: vscode.Uri) {
-    this.dataDirectory = storageUri.fsPath;
+  constructor(storagePath: string) {
+    this.dataDirectory = storagePath;
     this.fallbackPath = path.join(this.dataDirectory, "chronix.json");
   }
 

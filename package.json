@@ -54,6 +54,11 @@
           "default": 12000,
           "minimum": 1000,
           "description": "Maximum characters retained from copied conversation context."
+        },
+        "chronix.storagePath": {
+          "type": "string",
+          "default": "",
+          "description": "Optional absolute folder shared with the Chronix MCP server. Leave empty to use VS Code extension storage."
         }
       }
     }
@@ -61,7 +66,8 @@
   "scripts": {
     "compile": "tsc -p ./",
     "watch": "tsc -watch -p ./",
-    "package": "npx @vscode/vsce package"
+    "package": "npx @vscode/vsce package",
+    "mcp": "node ./out/mcpServer.js"
   },
   "devDependencies": {
     "@types/node": "^22.15.0",
